@@ -1,0 +1,59 @@
+{
+  "name": "hono-openid-connect",
+  "version": "1.0.0",
+  "description": "OpenID Connect middleware for Hono",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui",
+    "prepare": "npm run build",
+    "example:basic": "tsx --env-file=examples/.env examples/basic.ts",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"examples/**/*.ts\" \"test/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"examples/**/*.ts\" \"test/**/*.ts\""
+  },
+  "keywords": [
+    "hono",
+    "openid-connect",
+    "auth",
+    "oidc",
+    "oauth2"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@eslint/js": "^9.24.0",
+    "@hono/node-server": "^1.14.1",
+    "@types/node": "^20.11.26",
+    "@typescript-eslint/eslint-plugin": "^8.29.1",
+    "@typescript-eslint/parser": "^8.29.1",
+    "@vitest/coverage-v8": "^3.1.1",
+    "@vitest/ui": "^3.1.1",
+    "eslint": "^9.24.0",
+    "eslint-plugin-prettier": "^5.2.6",
+    "hono": "^4.7.6",
+    "hono-sessions": "^0.7.2",
+    "prettier": "^3.5.3",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.1"
+  },
+  "dependencies": {
+    "base64url": "^3.0.1",
+    "debug": "^4.4.0",
+    "joi": "^17.13.3",
+    "openid-client": "^6"
+  },
+  "peerDependencies": {
+    "hono": ">=3.0.0"
+  }
+}

@@ -1,0 +1,50 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Configuration Parser > should parse a valid configuration 1`] = `
+{
+  "attemptSilentLogin": false,
+  "auth0Logout": false,
+  "authRequired": true,
+  "authorizationParams": {
+    "response_mode": "form_post",
+    "response_type": "id_token",
+    "scope": "openid profile email",
+  },
+  "backchannelLogout": false,
+  "baseURL": "https://app.example.com",
+  "clientAuthMethod": "none",
+  "clientID": "test-client-id",
+  "clockTolerance": 60,
+  "discoveryCacheMaxAge": 600000,
+  "enableTelemetry": true,
+  "errorOnRequiredAuth": false,
+  "excludedClaims": [
+    "aud",
+    "iss",
+    "iat",
+    "exp",
+    "nbf",
+    "nonce",
+    "azp",
+    "auth_time",
+    "s_hash",
+    "at_hash",
+    "c_hash",
+  ],
+  "fetch": [Function],
+  "getLoginState": [Function],
+  "httpTimeout": 5000,
+  "httpUserAgent": "hono-openid-connect",
+  "idTokenSigningAlg": "RS256",
+  "idpLogout": false,
+  "issuerBaseURL": "https://auth.example.com",
+  "pushedAuthorizationRequests": false,
+  "routes": {
+    "backchannelLogout": "/backchannel-logout",
+    "callback": "/callback",
+    "login": "/login",
+    "logout": "/logout",
+    "postLogoutRedirect": "/",
+  },
+}
+`;

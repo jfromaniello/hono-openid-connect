@@ -1,9 +1,12 @@
-import { Context } from 'hono';
-import { SessionOptions } from 'hono-sessions';
-import { authorizationCodeGrant } from 'openid-client';
-import { getLoginState } from '../hooks/getLoginState';
-import { OIDCAuthorizationRequestParams } from '../types/authRequest';
-import { OidcSession } from '../types/config';
+import { SessionOptions } from "hono-sessions";
+import { OIDCAuthorizationRequestParams } from "./authRequest";
+
+type Routes = {
+  login: string;
+  logout: string;
+  callback: string;
+  backchannelLogout: string;
+};
 
 export interface Configuration {
   /**
@@ -33,12 +36,6 @@ export interface Configuration {
   authRequired: boolean;
 
   /**
-   * Whether to use Auth0 specific logic for federated logout.
-   * @default false
-   */
-  auth0Logout: boolean;
-
-  /**
    * Whether to use the IDP's logout endpoint.
    * @default false
    */
@@ -60,28 +57,35 @@ export interface Configuration {
   session: false | SessionOptions;
 
   /**
+   * Use this setting to prevent the default routes from being installed.
+   *
+   * @default []
+   */
+  customRoutes: (keyof Routes)[];
+
+  /**
    * Routes options.
    *
    * @default {
    *   login: '/login',
    *   logout: '/logout',
    *   callback: '/callback',
-   *   postLogoutRedirect: '/'
+   *   backchannelLogout: '/backchannel-logout'
    * }
    */
-  routes: {
-    login: string | false;
-    logout: string | false;
-    callback: string | false;
-    postLogoutRedirect: string | false;
-    backchannelLogout: string | false;
-  };
+  routes: Routes;
 
   /**
    * Additional authorization request parameters that will be included in
    * the authorization URL.
+   *
+   * @default {
+   *  response_type: 'id_token',
+   *  scope: 'openid profile email',
+   *  response_mode: 'form_post',
+   * }
    */
-  authorizationParams?: Partial<OIDCAuthorizationRequestParams>;
+  authorizationParams: Partial<OIDCAuthorizationRequestParams>;
 
   /**
    * Additional parameters that will be sent to the
@@ -90,7 +94,7 @@ export interface Configuration {
    * the authorization server only supports issuing an access token
    * with a single audience
    */
-  tokenEndpointParams?: Parameters<typeof authorizationCodeGrant>[3];
+  tokenEndpointParams?: Record<string, string>;
 
   /**
    * Whether to use pushed authorization requests.
@@ -129,8 +133,11 @@ export interface Configuration {
   httpTimeout?: number;
 
   // Hooks
-  afterCallback?: (c: Context, session: OidcSession) => Promise<OidcSession> | OidcSession;
-  getLoginState: getLoginState;
+  // afterCallback?: (
+  //   c: Context,
+  //   session: OidcSession,
+  //   state: any,
+  // ) => Promise<OIDCUserInfoResponse> | OIDCUserInfoResponse;
 
   /**
    * The method to use for client authentication.
@@ -144,16 +151,17 @@ export interface Configuration {
    * Otherwise, the @default is `client_secret_basic`.
    */
   clientAuthMethod:
-    | 'client_secret_basic'
-    | 'client_secret_post'
-    | 'client_secret_jwt'
-    | 'private_key_jwt'
-    | 'none';
+    | "client_secret_basic"
+    | "client_secret_post"
+    | "client_secret_jwt"
+    | "private_key_jwt"
+    | "none";
 
   /**
    * The client assertion signing key.
    * Required if `clientAuthMethod` is `private_key_jwt`.
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   clientAssertionSigningKey?: any;
 
   /**
@@ -162,17 +170,17 @@ export interface Configuration {
    * @default 'RS256'
    */
   clientAssertionSigningAlg?:
-    | 'RS256'
-    | 'RS384'
-    | 'RS512'
-    | 'PS256'
-    | 'PS384'
-    | 'PS512'
-    | 'ES256'
-    | 'ES256K'
-    | 'ES384'
-    | 'ES512'
-    | 'EdDSA';
+    | "RS256"
+    | "RS384"
+    | "RS512"
+    | "PS256"
+    | "PS384"
+    | "PS512"
+    | "ES256"
+    | "ES256K"
+    | "ES384"
+    | "ES512"
+    | "EdDSA";
 
   /**
    * Returns 401 if the user is not authenticated.
@@ -220,11 +228,12 @@ export interface Configuration {
    * Additional parameters that will be sent to the
    * logout endpoint.
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   logoutParams?: Record<string, any>;
 }
 
 // Type for the required fields that must be provided in InitConfiguration
-type RequiredConfigFields = 'issuerBaseURL' | 'baseURL' | 'clientID';
+type RequiredConfigFields = "issuerBaseURL" | "baseURL" | "clientID";
 
 // Type for the optional session field that should be partial in InitConfiguration
 type SessionField = {
@@ -233,13 +242,7 @@ type SessionField = {
 
 // Type for the optional routes field that should be partial in InitConfiguration
 type RoutesField = {
-  routes?: Partial<{
-    login: string | false;
-    logout: string | false;
-    callback: string | false;
-    postLogoutRedirect: string | false;
-    backchannelLogout: string | false;
-  }>;
+  routes?: Partial<Routes>;
 };
 
 /**
@@ -248,6 +251,6 @@ type RoutesField = {
  * since they have defaults in the schema.
  */
 export type InitConfiguration = Pick<Configuration, RequiredConfigFields> &
-  Partial<Omit<Configuration, RequiredConfigFields | 'session' | 'routes'>> &
+  Partial<Omit<Configuration, RequiredConfigFields | "session" | "routes">> &
   SessionField &
   RoutesField;

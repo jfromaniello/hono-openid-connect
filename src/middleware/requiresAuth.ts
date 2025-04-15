@@ -1,21 +1,36 @@
-import { Context, MiddlewareHandler, Next } from 'hono';
-import { OidcClientConfig } from '../types/config';
+import { Context, Next } from "hono";
+import { accepts } from "hono/accepts";
+import { HTTPException } from "hono/http-exception";
+import { getConfiguration } from "../config";
+import { login } from "./login";
 
 /**
- * Middleware to check if user is authenticated
+ * This middleware checks if the user is authetnicated.
+ *
+ * If not:
+ * - If the request accepts HTML and errorOnRequiredAuth is false
+ *   then it redirects to the login page
+ * - Otherwise it throws a 401 error
  */
-export function requiresAuth(): MiddlewareHandler {
+export function requiresAuth() {
   return async (c: Context, next: Next) => {
     // Check if user is authenticated
     if (!c.var.oidc?.isAuthenticated) {
-      // Get the login route from config
-      const { config } = c.var.oidcConfig as OidcClientConfig;
-      const loginRoute = config.routes?.login || '/login';
+      const configuration = getConfiguration(c);
+      const acceptsHTML =
+        accepts(c, {
+          header: "Accept",
+          supports: ["text/html", "application/json"],
+          default: "application/json",
+        }) === "text/html";
 
-      // Redirect to login with returnTo parameter
-      const returnTo = c.req.url;
-      const loginUrl = `${loginRoute}?returnTo=${encodeURIComponent(returnTo)}`;
-      return c.redirect(loginUrl);
+      if (configuration.errorOnRequiredAuth && !acceptsHTML) {
+        throw new HTTPException(401, {
+          message: "Authentication required",
+        });
+      }
+
+      return login()(c, next);
     }
 
     // Continue if authenticated

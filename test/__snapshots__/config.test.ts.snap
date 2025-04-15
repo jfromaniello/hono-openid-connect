@@ -3,7 +3,6 @@
 exports[`Configuration Parser > should parse a valid configuration 1`] = `
 {
   "attemptSilentLogin": false,
-  "auth0Logout": false,
   "authRequired": true,
   "authorizationParams": {
     "response_mode": "form_post",
@@ -32,7 +31,6 @@ exports[`Configuration Parser > should parse a valid configuration 1`] = `
     "c_hash",
   ],
   "fetch": [Function],
-  "getLoginState": [Function],
   "httpTimeout": 5000,
   "httpUserAgent": "hono-openid-connect",
   "idTokenSigningAlg": "RS256",
@@ -44,7 +42,6 @@ exports[`Configuration Parser > should parse a valid configuration 1`] = `
     "callback": "/callback",
     "login": "/login",
     "logout": "/logout",
-    "postLogoutRedirect": "/",
   },
 }
 `;

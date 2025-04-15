@@ -27,16 +27,14 @@ const app = new Hono();
 // Configure auth middleware with session options
 app.use(
   auth({
+    issuerBaseUrl: process.env.ISSUER_BASE_URL,
+    clientId: process.env.CLIENT_ID,
+    clientSecret: process.env.SECRET,
+    baseUrl: process.env.BASE_URL,
     session: {
       encryptionKey: "password_at_least_32_characters_long",
-      expireAfterSeconds: 900, // Expire session after 15 minutes of inactivity
-      cookieOptions: {
-        sameSite: "Lax",
-        path: "/",
-        httpOnly: true,
-      },
     },
-  })
+  }),
 );
 
 app.get("/", (c) => {

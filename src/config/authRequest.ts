@@ -7,25 +7,25 @@
 
 // Response type options
 type ResponseType =
-  | 'code' // Authorization Code Flow
-  | 'token' // Implicit Flow (Access Token only)
-  | 'id_token' // Implicit Flow (ID Token only)
-  | 'id_token token' // Implicit Flow (both tokens)
-  | 'code id_token' // Hybrid Flow
-  | 'code token' // Hybrid Flow
-  | 'code id_token token'; // Hybrid Flow
+  | "code" // Authorization Code Flow
+  | "token" // Implicit Flow (Access Token only)
+  | "id_token" // Implicit Flow (ID Token only)
+  | "id_token token" // Implicit Flow (both tokens)
+  | "code id_token" // Hybrid Flow
+  | "code token" // Hybrid Flow
+  | "code id_token token"; // Hybrid Flow
 
 // Response mode options
-type ResponseMode = 'query' | 'fragment' | 'form_post';
+type ResponseMode = "query" | "fragment" | "form_post";
 
 // Display options
-type Display = 'page' | 'popup' | 'touch' | 'wap';
+type Display = "page" | "popup" | "touch" | "wap";
 
 // Prompt options
-type Prompt = 'none' | 'login' | 'consent' | 'select_account';
+type Prompt = "none" | "login" | "consent" | "select_account";
 
 // Code challenge method options for PKCE
-type CodeChallengeMethod = 'plain' | 'S256';
+type CodeChallengeMethod = "plain" | "S256";
 
 /**
  * OIDC Authorization Request Parameters
@@ -168,12 +168,6 @@ interface OIDCAuthorizationRequestParams {
   code_challenge_method?: CodeChallengeMethod;
 
   // Additional optional standard parameters
-  /**
-   * Requests that specific claims be returned in the ID Token or UserInfo response.
-   * Can be a JSON object string or a direct object representation.
-   * @example '{"id_token":{"email":null,"email_verified":null},"userinfo":{"picture":null}}'
-   */
-  claims?: string | object;
 
   /**
    * JWT encoded OpenID Request Object that contains a set of claims about
@@ -191,6 +185,7 @@ interface OIDCAuthorizationRequestParams {
    * Allows for custom or implementation-specific parameters.
    * Different OpenID Connect providers may support additional parameters.
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
 

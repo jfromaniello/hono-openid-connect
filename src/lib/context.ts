@@ -1,5 +1,5 @@
 import { Context } from "hono";
-import { IDToken } from "oauth4webapi";
+import type { IDToken } from "oauth4webapi";
 import * as oidc from "openid-client";
 import { OIDCAuthenticatedSession } from "../types/session";
 import { OIDCEnv } from "./honoEnv";

@@ -1,8 +1,8 @@
 # Hono OpenID Connect Middleware
 
-A lightweight and flexible middleware for the [Hono](https://hono.dev) web framework that simplifies authentication via OpenID Connect (OIDC). This package enables seamless integration with OpenID Connect providers to secure your Hono applications with minimal configuration.
+An OpenID Connect (OIDC) authentication middleware for [Hono](https://hono.dev) web framework. Built on top of [openid-client](https://www.npmjs.com/package/openid-client), this package provides a simple way to secure your Hono applications using standard OIDC authentication flows.
 
-This middleware draws inspiration from [express-openid-connect](https://github.com/auth0/express-openid-connect), though its configuration and session cookie implementation are not compatible.
+This middleware enables seamless integration with OpenID Connect providers like Auth0, Okta, Google, and others with minimal configuration. It draws inspiration from [express-openid-connect](https://github.com/auth0/express-openid-connect), though its configuration and session cookie implementation are not compatible.
 
 ## Installation
 

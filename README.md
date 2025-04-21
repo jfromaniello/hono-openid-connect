@@ -1,6 +1,8 @@
 # Hono OpenID Connect Middleware
 
-A lightweight and flexible middleware for the [Hono](https://hono.dev) web framework that handles authentication via OpenID Connect (OIDC). This middleware enables easy integration with OpenID Connect providers to secure your Hono applications.
+A lightweight and flexible middleware for the [Hono](https://hono.dev) web framework that simplifies authentication via OpenID Connect (OIDC). This package enables seamless integration with OpenID Connect providers to secure your Hono applications with minimal configuration.
+
+This middleware draws inspiration from [express-openid-connect](https://github.com/auth0/express-openid-connect), though its configuration and session cookie implementation are not compatible.
 
 ## Installation
 
@@ -10,7 +12,7 @@ npm install hono-openid-connect
 
 ## Basic Usage
 
-The simplest way to secure your Hono application is to add the middleware at the top level. By default, all routes will be protected and require authentication.
+The simplest way to secure your Hono application is to implement the middleware at the application level. By default, all routes will require authentication.
 
 ```ts
 // .env
@@ -95,7 +97,7 @@ app.use(
 
 ### Session Configuration
 
-The middleware uses `hono-sessions` for session management. You can configure session options or disable sessions entirely:
+The middleware uses [hono-sessions](https://www.npmjs.com/package/hono-sessions) for session management. You can configure session options or disable sessions entirely:
 
 ```ts
 app.use(
@@ -115,9 +117,10 @@ app.use(
 );
 ```
 
-To disable sessions (not recommended for most use cases):
+To use your own instance of [hono-sessions](https://www.npmjs.com/package/hono-sessions):
 
 ```ts
+app.use(sessionMiddleware({}));
 app.use(
   auth({
     // ...required options
@@ -175,33 +178,9 @@ app.get("/profile", (c) => {
 });
 ```
 
-### Claim-Based Authorization
-
-Authorize users based on their claims:
-
-```ts
-import { Hono } from "hono";
-import { auth, claimEquals } from "hono-openid-connect";
-
-const app = new Hono();
-
-app.use(
-  auth({
-    /* ...options */
-  }),
-);
-
-// Only allow users with specific roles
-app.use("/admin/*", claimEquals("roles", "admin"));
-
-app.get("/admin/dashboard", (c) => {
-  return c.text("Admin Dashboard");
-});
-```
-
 ### Silent Login Attempt
 
-Try to authenticate silently without redirecting:
+Try to authenticate silently without user interaction:
 
 ```ts
 import { Hono } from "hono";
@@ -212,13 +191,11 @@ const app = new Hono();
 app.use(
   auth({
     /* ...options */
+    authRequired: false,
   }),
 );
 
-app.get("/", async (c) => {
-  // Try to authenticate silently
-  await attemptSilentLogin(c);
-
+app.get("/", attemptSilentLogin(), async (c) => {
   if (c.var.oidc?.isAuthenticated) {
     return c.text(`Hello ${c.var.oidc.user.name}!`);
   }
@@ -238,12 +215,16 @@ app.get("/", async (c) => {
 The middleware adds the following to the Hono context (`c.var`):
 
 - `c.var.oidc.isAuthenticated`: Boolean indicating if the user is authenticated
-- `c.var.oidc.user`: User information from ID token claims and UserInfo endpoint
-- `c.var.oidc.idToken`: Raw ID token
-- `c.var.oidc.accessToken`: Access token (if available)
-- `c.var.oidc.refreshToken`: Refresh token (if available)
 - `c.var.oidc.claims`: All claims from the ID token
+- `c.var.oidc.tokens`: The entire token exchange response:
+  - `c.var.oidc.tokens.id_token`: Raw ID token
+  - `c.var.oidc.tokens.access_token`: Access token (if available)
+  - `c.var.oidc.tokens.refresh_token`: Refresh token (if available)
+- `c.var.oidc.isExpired`: Boolean indicating if the access token is expired
+- `c.var.oidc.fetchUserInfo()`: Fetches user info from the UserInfo endpoint.
+- `c.var.oidc.refresh()`: Refreshes the access token using the refresh token (if available).
+- `c.var.oidcClient`: The openid-client authorization server configuration object. This is helpful if you need to invoke a method of the openid-client directly.
 
 ## License
 
-MIT
+MIT 2025 - José F. Romaniello

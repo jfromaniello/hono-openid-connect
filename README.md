@@ -1,6 +1,6 @@
 # Hono OpenID Connect Middleware
 
-A middleware for the [Hono](https://hono.dev) web framework to handle authentication via OpenID Connect.
+A lightweight and flexible middleware for the [Hono](https://hono.dev) web framework that handles authentication via OpenID Connect (OIDC). This middleware enables easy integration with OpenID Connect providers to secure your Hono applications.
 
 ## Installation
 
@@ -10,7 +10,7 @@ npm install hono-openid-connect
 
 ## Basic Usage
 
-The simplest use case for this middleware. By default all routes are protected.
+The simplest way to secure your Hono application is to add the middleware at the top level. By default, all routes will be protected and require authentication.
 
 ```ts
 // .env
@@ -27,10 +27,10 @@ const app = new Hono();
 // Configure auth middleware with session options
 app.use(
   auth({
-    issuerBaseUrl: process.env.ISSUER_BASE_URL,
-    clientId: process.env.CLIENT_ID,
-    clientSecret: process.env.SECRET,
-    baseUrl: process.env.BASE_URL,
+    issuerBaseURL: process.env.ISSUER_BASE_URL,
+    clientID: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
+    baseURL: process.env.BASE_URL,
     session: {
       encryptionKey: "password_at_least_32_characters_long",
     },
@@ -38,7 +38,7 @@ app.use(
 );
 
 app.get("/", (c) => {
-  return c.text(`hello ${c.var.oidc.user.sub}`);
+  return c.text(`Hello ${c.var.oidc?.claims?.name}!`);
 });
 
 export default app;
@@ -46,17 +46,203 @@ export default app;
 
 ## Features
 
-- OpenID Connect authentication flow
-- Session management
-- Configurable login, logout, and callback routes
-- Access token and refresh token support
-- User information retrieval
-- Configurable authentication requirements
-- Claim-based authorization
+- **OpenID Connect Authentication Flow**: Implements the standard OIDC authorization code flow
+- **Session Management**: Built-in session support with configurable cookie settings
+- **Configurable Routes**: Customize login, callback, and logout route paths
+- **Selective Protection**: Choose which routes require authentication with the `authRequired` option
+- **Token Management**: Handles access tokens, ID tokens and refresh tokens
+- **User Information**: Automatically fetches and provides user profile data from the UserInfo endpoint
+- **Claim-Based Authorization**: Middleware for authorizing based on claims from tokens
+- **PKCE Support**: Implements Proof Key for Code Exchange for enhanced security
+- **Environment Flexibility**: Works across various environments including Node.js, Bun, Cloudflare Workers, and more
 
-## Documentation
+## Configuration Options
 
-For more details on configuration and advanced usage, please refer to the [documentation](https://github.com/yourusername/hono-openid-connect).
+### Required Configuration
+
+| Option          | Type     | Description                                                      |
+| --------------- | -------- | ---------------------------------------------------------------- |
+| `issuerBaseURL` | `string` | Base URL of the OIDC provider (e.g., `https://auth.example.com`) |
+| `baseURL`       | `string` | Base URL of your application (e.g., `https://myapp.com`)         |
+| `clientID`      | `string` | Client ID provided by your OIDC provider                         |
+
+### Optional Configuration
+
+| Option                        | Type            | Default     | Description                                                                          |
+| ----------------------------- | --------------- | ----------- | ------------------------------------------------------------------------------------ |
+| `clientSecret`                | `string`        | `undefined` | Client Secret provided by your OIDC provider (required for most flows)               |
+| `authRequired`                | `boolean`       | `true`      | Whether authentication is required for all routes                                    |
+| `idpLogout`                   | `boolean`       | `false`     | Whether to perform logout at the identity provider when logging out                  |
+| `pushedAuthorizationRequests` | `boolean`       | `false`     | Enable Pushed Authorization Requests (PAR)                                           |
+| `customRoutes`                | `Array<string>` | `[]`        | Specify which built-in routes to skip (options: `'login'`, `'callback'`, `'logout'`) |
+
+### Routes Configuration
+
+You can customize the paths for login, callback, and logout endpoints:
+
+```ts
+app.use(
+  auth({
+    // ...required options
+    routes: {
+      login: "/custom-login",
+      callback: "/auth-callback",
+      logout: "/sign-out",
+    },
+  }),
+);
+```
+
+### Session Configuration
+
+The middleware uses `hono-sessions` for session management. You can configure session options or disable sessions entirely:
+
+```ts
+app.use(
+  auth({
+    // ...required options
+    session: {
+      encryptionKey: "your-secure-encryption-key-minimum-32-chars",
+      sessionCookieName: "my_session",
+      cookieOptions: {
+        sameSite: "Lax",
+        path: "/",
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
+  }),
+);
+```
+
+To disable sessions (not recommended for most use cases):
+
+```ts
+app.use(
+  auth({
+    // ...required options
+    session: false,
+  }),
+);
+```
+
+### Authorization Parameters
+
+You can customize the parameters sent to the authorization endpoint:
+
+```ts
+app.use(
+  auth({
+    // ...required options
+    authorizationParams: {
+      response_type: "code",
+      scope: "openid profile email",
+      response_mode: "query",
+    },
+  }),
+);
+```
+
+## Advanced Usage
+
+### Selective Route Protection
+
+Only protect specific routes:
+
+```ts
+import { Hono } from "hono";
+import { auth, requiresAuth } from "hono-openid-connect";
+
+const app = new Hono();
+
+app.use(
+  auth({
+    // ...required options
+    authRequired: false,
+  }),
+);
+
+// Public route - no authentication required
+app.get("/", (c) => {
+  return c.text("This is a public page");
+});
+
+// Protected route - authentication required
+app.use("/profile/*", requiresAuth());
+app.get("/profile", (c) => {
+  const user = c.var.oidc.user;
+  return c.text(`Hello ${user.name || user.sub}!`);
+});
+```
+
+### Claim-Based Authorization
+
+Authorize users based on their claims:
+
+```ts
+import { Hono } from "hono";
+import { auth, claimEquals } from "hono-openid-connect";
+
+const app = new Hono();
+
+app.use(
+  auth({
+    /* ...options */
+  }),
+);
+
+// Only allow users with specific roles
+app.use("/admin/*", claimEquals("roles", "admin"));
+
+app.get("/admin/dashboard", (c) => {
+  return c.text("Admin Dashboard");
+});
+```
+
+### Silent Login Attempt
+
+Try to authenticate silently without redirecting:
+
+```ts
+import { Hono } from "hono";
+import { auth, attemptSilentLogin } from "hono-openid-connect";
+
+const app = new Hono();
+
+app.use(
+  auth({
+    /* ...options */
+  }),
+);
+
+app.get("/", async (c) => {
+  // Try to authenticate silently
+  await attemptSilentLogin(c);
+
+  if (c.var.oidc?.isAuthenticated) {
+    return c.text(`Hello ${c.var.oidc.user.name}!`);
+  }
+
+  return c.text("You are not logged in");
+});
+```
+
+## Current Limitations
+
+- **Backchannel Logout**: Unlike express-openid-connect, this middleware does not currently support backchannel logout.
+- **JWT Response Mode**: Currently supports standard response modes but not JWT response mode.
+- **Dynamic Client Registration**: Manual client registration is required.
+
+## Context Variables
+
+The middleware adds the following to the Hono context (`c.var`):
+
+- `c.var.oidc.isAuthenticated`: Boolean indicating if the user is authenticated
+- `c.var.oidc.user`: User information from ID token claims and UserInfo endpoint
+- `c.var.oidc.idToken`: Raw ID token
+- `c.var.oidc.accessToken`: Access token (if available)
+- `c.var.oidc.refreshToken`: Refresh token (if available)
+- `c.var.oidc.claims`: All claims from the ID token
 
 ## License
 

@@ -64,7 +64,7 @@ export const login = (params: LoginParams = {}) => {
       codeChallenge = await oidc.calculatePKCECodeChallenge(codeVerifier);
     }
 
-    const options: Partial<OIDCAuthorizationRequestParams> = {
+    const authParams: Partial<OIDCAuthorizationRequestParams> = {
       ...configuration.authorizationParams,
       redirect_uri: redirectURI,
       code_challenge: codeChallenge,
@@ -74,10 +74,10 @@ export const login = (params: LoginParams = {}) => {
     };
 
     if (params.silent) {
-      options.prompt = "none";
+      authParams.prompt = "none";
     }
 
-    debug("Starting login flow with:", options);
+    debug("Starting login flow with:", authParams);
 
     session.flash("oidc_tx", {
       codeVerifier: codeVerifier,
@@ -87,9 +87,17 @@ export const login = (params: LoginParams = {}) => {
       silent: params.silent ?? false,
     });
 
+    if (configuration.pushedAuthorizationRequests) {
+      const url = await oidc.buildAuthorizationUrlWithPAR(
+        oidcClientConfig,
+        authParams,
+      );
+      return c.redirect(url.href);
+    }
+
     const authUrl = oidc.buildAuthorizationUrl(
       oidcClientConfig,
-      toSearchParams(options),
+      toSearchParams(authParams),
     );
 
     return c.redirect(authUrl);

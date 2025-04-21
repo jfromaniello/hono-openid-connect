@@ -49,6 +49,15 @@ export async function initializeOidcClient(
       },
     );
 
+    if (
+      config.pushedAuthorizationRequests &&
+      !oidcClient.serverMetadata().pushed_authorization_request_endpoint
+    ) {
+      throw new Error(
+        "pushed_authorization_request_endpoint must be configured on the issuer to use pushedAuthorizationRequests",
+      );
+    }
+
     oidcClient[oidc.customFetch] = config.fetch;
     oidcClient.timeout = config.httpTimeout;
 
@@ -57,7 +66,6 @@ export async function initializeOidcClient(
 
     return oidcClient;
   } catch (error) {
-    console.error("Failed to initialize OIDC client:", error);
     throw new Error(`Could not initialize OIDC client: ${error}`);
   }
 }

@@ -27,7 +27,10 @@
     "oidc",
     "oauth2"
   ],
-  "author": "",
+  "author": {
+    "name": "José F. Romaniello",
+    "url": "https://x.com/jfroma"
+  },
   "license": "MIT",
   "devDependencies": {
     "@eslint/compat": "^1.2.8",

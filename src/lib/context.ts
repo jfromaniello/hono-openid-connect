@@ -31,7 +31,7 @@ export class OIDCContext {
 
     const oidcClient = this.c.var.oidcClient!;
     const tokens = this.oidcSession.tokens;
-    const claims = this.claims();
+    const claims = this.claims;
     const sub = claims?.sub;
 
     if (

@@ -79,7 +79,7 @@ export const login = (params: LoginParams = {}) => {
 
     debug("Starting login flow with:", options);
 
-    session.set("oidc_tx", {
+    session.flash("oidc_tx", {
       codeVerifier: codeVerifier,
       nonce,
       state,

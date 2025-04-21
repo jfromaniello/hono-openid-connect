@@ -5,7 +5,6 @@ type Routes = {
   login: string;
   logout: string;
   callback: string;
-  backchannelLogout: string;
 };
 
 export interface Configuration {
@@ -70,7 +69,6 @@ export interface Configuration {
    *   login: '/login',
    *   logout: '/logout',
    *   callback: '/callback',
-   *   backchannelLogout: '/backchannel-logout'
    * }
    */
   routes: Routes;
@@ -101,18 +99,6 @@ export interface Configuration {
    * @default false
    */
   pushedAuthorizationRequests: boolean;
-
-  /**
-   * Enable backchannel logout by setting the URL
-   * of the backchannel logout endpoint.
-   * @default false
-   */
-  backchannelLogout:
-    | boolean
-    | {
-        isLoggedOut: boolean | (() => Promise<boolean>);
-        onLogoutToken: (token: string) => Promise<void>;
-      };
 
   /**
    * The clock tolerance for the OIDC client.

@@ -64,15 +64,6 @@ export const ConfigurationSchema = Joi.object({
     .unknown(true)
     .default(),
   logoutParams: Joi.object().optional(),
-  backchannelLogout: Joi.alternatives([
-    Joi.object({
-      isLoggedOut: Joi.alternatives([Joi.function(), false])
-        .optional()
-        .default(false),
-      onLogoutToken: Joi.function().optional(),
-    }),
-    Joi.boolean(),
-  ]).default(false),
   baseURL: Joi.string()
     .uri()
     .required()
@@ -141,7 +132,7 @@ export const ConfigurationSchema = Joi.object({
   pushedAuthorizationRequests: Joi.boolean().optional().default(false),
   customRoutes: Joi.array()
     .unique()
-    .items("login", "callback", "logout", "backchannelLogout")
+    .items("login", "callback", "logout")
     .optional()
     .default([]),
   routes: Joi.object({
@@ -157,10 +148,6 @@ export const ConfigurationSchema = Joi.object({
       .regex(/^\//)
       .uri({ relativeOnly: true })
       .default("/callback"),
-    backchannelLogout: Joi.string()
-      .regex(/^\//)
-      .uri({ relativeOnly: true })
-      .default("/backchannel-logout"),
   })
     .default()
     .unknown(false),

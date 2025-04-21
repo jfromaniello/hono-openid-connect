@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, expect, it } from "vitest";
 import { parseConfiguration } from "../src/config";
 import { InitConfiguration } from "../src/config/Configuration";
@@ -8,6 +9,7 @@ describe("Configuration Parser", () => {
       issuerBaseURL: "https://auth.example.com",
       baseURL: "https://app.example.com",
       clientID: "test-client-id",
+      clientSecret: "test",
     };
 
     const parsedConfig = parseConfiguration(validConfig);
@@ -38,6 +40,7 @@ describe("Configuration Parser", () => {
       issuerBaseURL: "https://auth.example.com",
       baseURL: "https://app.example.com",
       clientID: "test-client-id",
+      clientSecret: "test-client-secret",
     };
 
     const parsedConfig = parseConfiguration(minimalConfig);
@@ -50,35 +53,7 @@ describe("Configuration Parser", () => {
       login: "/login",
       logout: "/logout",
       callback: "/callback",
-      backchannelLogout: "/backchannel-logout",
     });
-  });
-
-  it("should validate backchannelLogout configuration", () => {
-    const configWithBackchannelLogout: InitConfiguration = {
-      issuerBaseURL: "https://auth.example.com",
-      baseURL: "https://app.example.com",
-      clientID: "test-client-id",
-      backchannelLogout: {
-        isLoggedOut: async () => true,
-        onLogoutToken: async (token: string) => {
-          /* implementation */
-        },
-      },
-    };
-
-    const parsedConfig = parseConfiguration(configWithBackchannelLogout);
-
-    // Type assertion for backchannelLogout property
-    const config = parsedConfig as unknown as {
-      backchannelLogout: {
-        isLoggedOut: boolean | (() => Promise<boolean>);
-        onLogoutToken: (token: string) => Promise<void>;
-      };
-    };
-
-    expect(config.backchannelLogout).toHaveProperty("isLoggedOut");
-    expect(config.backchannelLogout).toHaveProperty("onLogoutToken");
   });
 
   it("should cache parsed configurations", () => {
@@ -86,6 +61,7 @@ describe("Configuration Parser", () => {
       issuerBaseURL: "https://auth.example.com",
       baseURL: "https://app.example.com",
       clientID: "test-client-id",
+      clientSecret: "test",
     };
 
     const firstParsed = parseConfiguration(config);

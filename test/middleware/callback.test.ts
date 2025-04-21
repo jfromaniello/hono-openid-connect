@@ -58,6 +58,7 @@ describe("callback middleware", () => {
       id_token: "mock-id-token",
       token_type: "Bearer",
       expires_at: 1234567890,
+      claims: vi.fn(),
     };
 
     (oidc.authorizationCodeGrant as Mock).mockResolvedValue(mockTokens);
@@ -76,6 +77,7 @@ describe("callback middleware", () => {
       set: vi.fn(),
       req: {
         url: "https://app.example.com/callback?code=mock-code&state=mock-state",
+        raw: {},
       },
       redirect: vi.fn().mockImplementation((url) => {
         return { status: 302, headers: { location: url } };
@@ -118,7 +120,7 @@ describe("callback middleware", () => {
     it("should call authorizationCodeGrant with correct parameters", () => {
       expect(oidc.authorizationCodeGrant).toHaveBeenCalledWith(
         mockContext.var.oidcClient,
-        expect.any(URL),
+        mockContext.req.raw,
         {
           pkceCodeVerifier: "mock-code-verifier",
           expectedNonce: "mock-nonce",

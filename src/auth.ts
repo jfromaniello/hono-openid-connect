@@ -17,9 +17,7 @@ import {
 /**
  * Main auth middleware function
  */
-export function auth(
-  initConfig: InitConfiguration,
-): MiddlewareHandler<OIDCEnv> {
+export function auth(initConfig: InitConfiguration): MiddlewareHandler {
   const config = parseConfiguration(initConfig);
 
   // Initialize session middleware if needed

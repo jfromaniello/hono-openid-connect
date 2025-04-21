@@ -9,7 +9,6 @@ import { initializeOidcClient } from "./lib/client";
 import { OIDCContext } from "./lib/context";
 import { OIDCEnv } from "./lib/honoEnv";
 import {
-  handleBackchannelLogout as backchannelLogoutHandler,
   callback as callbackHandler,
   login as loginHandler,
   logout as logoutHandler,
@@ -50,7 +49,7 @@ export function auth(
 
         // Use destructuring with defaults to ensure routes is always defined
         const { routes, authRequired } = config;
-        const { login, callback, logout, backchannelLogout } = routes;
+        const { login, callback, logout } = routes;
 
         // Handle login route
         if (!config.customRoutes.includes("login") && c.req.path === login) {
@@ -70,24 +69,16 @@ export function auth(
           return logoutHandler()(c, next);
         }
 
-        // Handle backchannel logout if enabled
-        if (
-          !config.customRoutes.includes("backchannelLogout") &&
-          c.req.path === backchannelLogout
-        ) {
-          return backchannelLogoutHandler(c);
-        }
-
         // Handle unauthenticated requests
         if (authRequired && !c.var.oidc?.isAuthenticated) {
           return loginHandler()(c, next);
         }
-
-        // Continue to the next middleware or route handler
       } catch (error) {
         console.error("OIDC Middleware Error:", error);
         return c.text("Internal Server Error", 500);
       }
+
+      // Continue to the next middleware or route handler
       return await next();
     },
   );

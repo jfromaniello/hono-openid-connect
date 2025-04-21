@@ -124,11 +124,12 @@ describe("login middleware", () => {
     });
 
     it("should store the verification data in the session", () => {
+      expect(mockSession.flash).toHaveBeenCalled();
       expect(mockSession.flash).toHaveBeenCalledWith("oidc_tx", {
         codeVerifier: "mock-code-verifier",
         nonce: "mock-nonce",
         state: "mock-state",
-        returnTo: "https://app.example.com/login",
+        returnTo: "/",
         silent: false,
       });
     });

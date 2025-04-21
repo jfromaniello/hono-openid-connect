@@ -55,6 +55,7 @@
     "base64url": "^3.0.1",
     "debug": "^4.4.0",
     "joi": "^17.13.3",
+    "jose": "^6.0.10",
     "oauth4webapi": "^3.5.0",
     "openid-client": "^6",
     "quick-lru": "^7.0.1"

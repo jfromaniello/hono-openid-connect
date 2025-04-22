@@ -1,5 +1,5 @@
-// Export core middleware
 export { auth } from "./auth";
+
 export type { OIDCEnv, OIDCVariables } from "./lib/honoEnv";
 
 export {
@@ -11,3 +11,5 @@ export {
   requiresAuth,
   resumeSilentLogin,
 } from "./middleware";
+
+export { OIDCException } from "./lib/Exception";

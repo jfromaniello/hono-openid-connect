@@ -5,11 +5,13 @@ import * as oidc from "openid-client";
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import { getConfiguration } from "../../src/config";
 import { OIDCContext } from "../../src/lib/context";
+import { OIDCException } from "../../src/lib/Exception";
 import { resumeSilentLogin } from "../../src/middleware";
 import { callback } from "../../src/middleware/callback";
 
 // Mock dependencies
-vi.mock("openid-client", () => ({
+vi.mock("openid-client", async (importOriginal) => ({
+  ...(await importOriginal()),
   authorizationCodeGrant: vi.fn(),
 }));
 
@@ -233,6 +235,75 @@ describe("callback middleware", () => {
     it("should propagate the error", async () => {
       await expect(callback()(mockContext, nextFn)).rejects.toThrow(
         "Authorization code grant failed",
+      );
+    });
+  });
+
+  describe("when callback verification returns an error", () => {
+    let err: Error;
+    beforeEach(async () => {
+      (oidc.authorizationCodeGrant as Mock).mockImplementation(() => {
+        throw new oidc.ResponseBodyError("Invalid authorization code", {
+          cause: {
+            error: "invalid_grant",
+            error_description: "The authorization code is invalid or expired",
+          },
+          response: new Response("invalid grant", { status: 403 }),
+        });
+      });
+
+      try {
+        await callback()(mockContext, nextFn);
+      } catch (error) {
+        err = error;
+      }
+    });
+
+    it("should retrieve the verification data from the session", () => {
+      expect(mockSession.get).toHaveBeenCalledWith("oidc_tx");
+    });
+
+    it("should call the resume silent login middleware", () => {
+      expect(resumeSilentLoginMiddleware).toHaveBeenCalledWith(
+        mockContext,
+        nextFn,
+      );
+    });
+
+    it("should call authorizationCodeGrant with correct parameters", () => {
+      expect(oidc.authorizationCodeGrant).toHaveBeenCalledWith(
+        mockContext.var.oidcClient,
+        mockContext.req.raw,
+        {
+          pkceCodeVerifier: "mock-code-verifier",
+          expectedNonce: "mock-nonce",
+          expectedState: "mock-state",
+          idTokenExpected: true,
+        },
+        mockConfiguration.tokenEndpointParams,
+      );
+    });
+
+    it("should set the auth session in the session store", () => {
+      expect(mockSession.set).not.toHaveBeenCalled();
+    });
+
+    it("should create and set a new OIDCContext", () => {
+      expect(OIDCContext).not.toHaveBeenCalled();
+      expect(mockContext.set).not.toHaveBeenCalledWith(
+        "oidc",
+        expect.any(OIDCContext),
+      );
+    });
+
+    it("should redirect to the returnTo URL by default", () => {
+      expect(mockContext.redirect).not.toHaveBeenCalledWith("/dashboard");
+    });
+
+    it("should throw the right error", () => {
+      expect(err).toBeInstanceOf(OIDCException);
+      expect(err).toMatchInlineSnapshot(
+        `[Error: The authorization code is invalid or expired]`,
       );
     });
   });

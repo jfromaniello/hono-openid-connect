@@ -146,6 +146,27 @@ app.use(
 );
 ```
 
+### Error handling
+
+You can catch `OIDCException` errors and handle them in your application. This is useful for logging or displaying custom error messages.
+
+```js
+import { OIDCException } from "hono-openid-connect";
+
+app.onError((err, c) => {
+  // Handle OIDC-specific errors
+  if (err instanceof OIDCException) {
+    console.log(err);
+    if (process.env.NODE_ENV === "development") {
+      return err.getResponse();
+    }
+    return c.text(`Authentication Error`, 500);
+  }
+  // Handle other errors
+  return c.text(`Internal Server Error: ${err.message}`, 500);
+});
+```
+
 ## Advanced Usage
 
 ### Selective Route Protection

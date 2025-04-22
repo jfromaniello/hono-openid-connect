@@ -5,7 +5,8 @@ export class OIDCException extends HTTPException {
   constructor(
     error: string,
     errorDescription: string,
-    status: ContentfulStatusCode = 400,
+    status: ContentfulStatusCode | number = 400,
+    cause: unknown = null,
   ) {
     const res = new Response(
       JSON.stringify({
@@ -18,9 +19,10 @@ export class OIDCException extends HTTPException {
       },
     );
 
-    super(status, {
+    super(status as ContentfulStatusCode, {
       message: errorDescription,
-      res: res,
+      res,
+      cause,
     });
   }
 }

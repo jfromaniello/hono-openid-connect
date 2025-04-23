@@ -3,8 +3,11 @@ import { sessionMiddleware } from "hono-sessions";
 import { every } from "hono/combine";
 import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
-import { parseConfiguration } from "./config";
-import { InitConfiguration } from "./config/Configuration";
+import {
+  assignFromEnv,
+  ConditionalInitConfig,
+  parseConfiguration,
+} from "./config";
 import { initializeOidcClient } from "./lib/client";
 import { OIDCContext } from "./lib/context";
 import { OIDCEnv } from "./lib/honoEnv";
@@ -15,10 +18,16 @@ import {
 } from "./middleware";
 
 /**
- * Main auth middleware function
+ * Main auth middleware function.
+ *
+ * This function initializes the OIDC middleware with the provided configuration.
+ * It sets up the session middleware if needed and handles the OIDC client initialization.
+ * It also manages the routing for login, callback, and logout endpoints.
+ *
  */
-export function auth(initConfig: InitConfiguration): MiddlewareHandler {
-  const config = parseConfiguration(initConfig);
+export function auth(initConfig: ConditionalInitConfig): MiddlewareHandler {
+  const withEnvVars = assignFromEnv(initConfig);
+  const config = parseConfiguration(withEnvVars);
 
   // Initialize session middleware if needed
   const sessionMiddlewareHandler =

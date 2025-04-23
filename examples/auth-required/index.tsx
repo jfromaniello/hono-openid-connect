@@ -46,7 +46,7 @@ app.get(
       </html>
     )
   })
-)
+);
 
 // Add a simple protected route
 app.get("/", (c: Context<OIDCEnv>) => {
@@ -72,7 +72,7 @@ app.get('/protected', attemptSilentLogin(), requiresAuth(), (c) => {
       If you can see this text you are authenticated.
     </p>
   );
-})
+});
 
 app.get('/protected-silent',
   attemptSilentLogin(),
@@ -84,7 +84,7 @@ app.get('/protected-silent',
       If you can see this text you are authenticated.
     </p>
   );
-})
+});
 
 
 // Start the server

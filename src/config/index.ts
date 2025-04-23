@@ -11,6 +11,7 @@ export const parseConfiguration = (
   if (parsedConfig.has(config)) {
     return parsedConfig.get(config)!;
   }
+  console.dir(config);
   const result = ConfigurationSchema.validate(config);
   if (result.error) {
     throw result.error;
@@ -28,3 +29,5 @@ export const getConfiguration = (c: Context<OIDCEnv>): Configuration => {
   }
   return c.var.oidcConfiguration;
 };
+
+export { assignFromEnv, ConditionalInitConfig } from "./envConfig";

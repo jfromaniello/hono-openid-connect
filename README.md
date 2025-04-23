@@ -167,6 +167,41 @@ app.onError((err, c) => {
 });
 ```
 
+### Configuration thru environment variables
+
+You can also configure the middleware using environment variables. The following environment variables are supported:
+
+- OIDC_ISSUER_URL: The issuer URL of the OpenID Connect provider (e.g., `https://auth.example.com`)
+- OIDC_CLIENT_ID: The client ID provided by your OIDC provider
+- OIDC_CLIENT_SECRET?: The client secret provided by your OIDC provider (required for most flows)
+- BASE_URL: The base URL of your application (e.g., `https://myapp.com`)
+- OIDC_SESSION_ENCRYPTION_KEY: The encryption key for session management (minimum 32 characters).
+
+In order to make the parameters of the middleware optional so you can use `auth({})`, your `process.env` must define the properties as follows:
+
+```js
+delcare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      OIDC_ISSUER_URL: string;
+      OIDC_CLIENT_ID: string;
+      OIDC_CLIENT_SECRET?: string;
+      BASE_URL: string;
+      OIDC_SESSION_ENCRYPTION_KEY: string;
+    }
+  }
+}
+```
+
+You automatically achieve this in Cloudflare's wrangler if you use:
+
+```
+  "compatibility_flags": [
+    "nodejs_compat",
+    "nodejs_compat_populate_process_env"
+  ],
+```
+
 ## Advanced Usage
 
 ### Selective Route Protection

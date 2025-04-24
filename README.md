@@ -15,12 +15,6 @@ npm install hono-openid-connect
 The simplest way to secure your Hono application is to implement the middleware at the application level. By default, all routes will require authentication.
 
 ```ts
-// .env
-// ISSUER_BASE_URL=https://YOUR_DOMAIN
-// CLIENT_ID=YOUR_CLIENT_ID
-// BASE_URL=https://YOUR_APPLICATION_ROOT_URL
-// SECRET=LONG_RANDOM_STRING
-
 import { Hono } from "hono";
 import { auth } from "hono-openid-connect";
 

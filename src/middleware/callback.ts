@@ -29,6 +29,7 @@ export const callback = (params: CallbackParams = {}) => {
   ): Promise<Response | void> {
     try {
       const configuration = getConfiguration(c);
+      const { debug } = configuration;
       const oidcClient = c.var.oidcClient!;
       const session = c.get("session")!;
       const verification = session.get("oidc_tx");
@@ -40,6 +41,8 @@ export const callback = (params: CallbackParams = {}) => {
           401,
         );
       }
+
+      debug("Starting OIDC callback handler");
 
       const requestedAt = Date.now() / 1000;
       const { codeVerifier, nonce, state, returnTo } = verification;

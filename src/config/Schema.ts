@@ -135,6 +135,7 @@ export const ConfigurationSchema = Joi.object({
     .items("login", "callback", "logout")
     .optional()
     .default([]),
+  log: Joi.function().default(() => {}),
   routes: Joi.object({
     login: Joi.string()
       .regex(/^\//)

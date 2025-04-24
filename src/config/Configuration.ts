@@ -216,6 +216,13 @@ export interface Configuration {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   logoutParams?: Record<string, any>;
+
+  /**
+   * Logger function to use for the OIDC client.
+   * @param message - The message to log.
+   * @param metadata - Additional metadata to include in the log.
+   */
+  debug: (message: string, metadata?: Record<string, unknown>) => void;
 }
 
 // Type for the required fields that must be provided in InitConfiguration

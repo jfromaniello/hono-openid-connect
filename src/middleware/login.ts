@@ -3,10 +3,7 @@ import * as oidc from "openid-client";
 import { getConfiguration } from "../config";
 import { OIDCAuthorizationRequestParams } from "../config/authRequest";
 import { OIDCEnv } from "../lib/honoEnv";
-import initDebug from "../utils/debug";
 import { toSearchParams } from "../utils/util";
-
-const debug = initDebug("login");
 
 export type LoginParams = {
   /**
@@ -39,6 +36,7 @@ export type LoginParams = {
 export const login = (params: LoginParams = {}) => {
   return createMiddleware<OIDCEnv>(async function (c) {
     const configuration = getConfiguration(c);
+    const { debug } = configuration;
     const oidcClientConfig = c.var.oidcClient!;
     const session = c.get("session")!;
     const returnTo =

@@ -12,4 +12,6 @@ export {
   resumeSilentLogin,
 } from "./middleware";
 
+export type { TokenEndpointResponse as TokenSet } from "openid-client";
+
 export { OIDCException } from "./lib/Exception";

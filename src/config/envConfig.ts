@@ -5,6 +5,7 @@ export type MinimalConfigByEnv = {
   OIDC_ISSUER_URL: string;
   OIDC_CLIENT_ID: string;
   OIDC_CLIENT_SECRET?: string;
+  OIDC_AUDIENCE?: string;
   BASE_URL: string;
   OIDC_SESSION_ENCRYPTION_KEY?: string;
 };
@@ -42,14 +43,22 @@ export const assignFromEnv = (
     return configWithoutEnv as InitConfiguration;
   }
 
-  const { OIDC_ISSUER_URL, OIDC_CLIENT_ID, OIDC_CLIENT_SECRET, BASE_URL } =
-    process.env;
+  const {
+    OIDC_ISSUER_URL,
+    OIDC_CLIENT_ID,
+    OIDC_CLIENT_SECRET,
+    BASE_URL,
+    OIDC_AUDIENCE,
+  } = process.env;
   return {
     ...configWithoutEnv,
     issuerBaseURL: configWithoutEnv.issuerBaseURL ?? OIDC_ISSUER_URL,
     clientID: configWithoutEnv.clientID ?? OIDC_CLIENT_ID,
     clientSecret: configWithoutEnv.clientSecret ?? OIDC_CLIENT_SECRET,
     baseURL: configWithoutEnv.baseURL ?? BASE_URL,
+    authorizationParams: OIDC_AUDIENCE
+      ? { audience: OIDC_AUDIENCE }
+      : undefined,
     session:
       configWithoutEnv.session === false
         ? false

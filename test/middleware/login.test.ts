@@ -79,6 +79,7 @@ describe("login middleware", () => {
 
     // Create mock configuration
     mockConfiguration = {
+      debug: vi.fn(),
       baseURL: "https://app.example.com",
       routes: {
         callback: "/callback",

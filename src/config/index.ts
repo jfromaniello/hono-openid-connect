@@ -11,7 +11,6 @@ export const parseConfiguration = (
   if (parsedConfig.has(config)) {
     return parsedConfig.get(config)!;
   }
-  console.dir(config);
   const result = ConfigurationSchema.validate(config);
   if (result.error) {
     throw result.error;

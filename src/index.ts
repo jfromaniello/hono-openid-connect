@@ -1,6 +1,8 @@
 export { auth } from "./auth";
 
+export { UserInfoResponse as UserInfo } from "openid-client";
 export type { OIDCEnv, OIDCVariables } from "./lib/honoEnv";
+export { OIDCSession } from "./types/session";
 
 export {
   attemptSilentLogin,

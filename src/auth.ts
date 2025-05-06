@@ -1,5 +1,5 @@
+import { sessionMiddleware } from "@jfromaniello/hono-sessions";
 import { MiddlewareHandler, Next } from "hono";
-import { sessionMiddleware } from "hono-sessions";
 import { every } from "hono/combine";
 import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";

@@ -1,4 +1,4 @@
-import { Session } from "hono-sessions";
+import { Session } from "@jfromaniello/hono-sessions";
 import * as oidc from "openid-client";
 
 /**

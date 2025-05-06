@@ -1,4 +1,4 @@
-import { Context, Next } from "hono";
+import { Next } from "hono";
 import { createMiddleware } from "hono/factory";
 import * as oidc from "openid-client";
 import { getConfiguration } from "../config";
@@ -24,7 +24,7 @@ type CallbackParams = {
  */
 export const callback = (params: CallbackParams = {}) => {
   return createMiddleware<OIDCEnv>(async function callback(
-    c: Context,
+    c,
     next: Next,
   ): Promise<Response | void> {
     try {

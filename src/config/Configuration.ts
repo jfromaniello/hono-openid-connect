@@ -1,4 +1,4 @@
-import { SessionOptions } from "hono-sessions";
+import { SessionOptions } from "@jfromaniello/hono-sessions";
 import { OIDCAuthorizationRequestParams } from "./authRequest";
 
 type Routes = {

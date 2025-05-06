@@ -1,4 +1,4 @@
-import { CookieStore } from "hono-sessions";
+import { CookieStore } from "@jfromaniello/hono-sessions";
 import { z } from "zod";
 
 const isHttps = /^https:/i;

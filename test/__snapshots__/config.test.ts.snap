@@ -14,6 +14,7 @@ exports[`Configuration Parser > should parse a valid configuration 1`] = `
   "clientSecret": "test",
   "clockTolerance": 60,
   "customRoutes": [],
+  "debug": [Function],
   "discoveryCacheMaxAge": 600000,
   "enableTelemetry": true,
   "errorOnRequiredAuth": false,
@@ -41,6 +42,23 @@ exports[`Configuration Parser > should parse a valid configuration 1`] = `
     "callback": "/callback",
     "login": "/login",
     "logout": "/logout",
+  },
+  "session": {
+    "cookieOptions": {
+      "httpOnly": true,
+      "path": "/",
+      "sameSite": "Lax",
+      "secure": true,
+      "sessionCookieName": "session",
+    },
+    "encryptionKey": "test encryption key fdsgfds gfds ",
+    "expireAfterSeconds": 86400,
+    "sessionCookieName": "appSession",
+    "store": CookieStore {
+      "cookieOptions": undefined,
+      "encryptionKey": undefined,
+      "sessionCookieName": "session",
+    },
   },
 }
 `;

@@ -55,10 +55,10 @@
   },
   "dependencies": {
     "hono-sessions": "^0.7.2",
-    "joi": "^17.13.3",
     "oauth4webapi": "^3.5.0",
     "openid-client": "^6",
-    "quick-lru": "^7.0.1"
+    "quick-lru": "^7.0.1",
+    "zod": "^3.24.4"
   },
   "peerDependencies": {
     "hono": ">=3.0.0"

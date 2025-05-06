@@ -6,7 +6,7 @@
       "type": "node",
       "request": "launch",
       // Debug current file in VSCode
-      "program": "${workspaceFolder}/examples/auth-required/index.tsx",
+      "program": "${workspaceFolder}/examples/basic/index.ts",
       /*
      * Path to tsx binary
      * Assuming locally installed

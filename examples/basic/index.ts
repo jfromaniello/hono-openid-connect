@@ -1,9 +1,11 @@
 import { serve } from "@hono/node-server";
 import { Context, Hono } from "hono";
-import { auth, OIDCEnv } from "../../src"; // Import from our local package
+import { auth, OIDCEnv, OIDCVariables } from "../../src"; // Import from our local package
 
 // Create the Hono app
-const app = new Hono();
+const app = new Hono<{
+  Variables: OIDCVariables<{ test: number }>;
+}>();
 
 // Configure auth middleware
 const authMiddleware = auth({
@@ -24,6 +26,12 @@ app.get("/", (c: Context<OIDCEnv>) => {
   const user = c.var.oidc?.claims;
   return c.text(`Hello ${user?.name || "User"}!
     You are authenticated.`);
+});
+
+app.get("/session-test", async (c) => {
+  const current = c.get("session")?.get("test") ?? 0;
+  c.get("session")?.set("test", current + 1);
+  return c.text(`Session test: ${current + 1}`);
 });
 
 // Add an unprotected route

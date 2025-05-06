@@ -49,7 +49,6 @@ exports[`Configuration Parser > should parse a valid configuration 1`] = `
       "path": "/",
       "sameSite": "Lax",
       "secure": true,
-      "sessionCookieName": "session",
     },
     "encryptionKey": "test encryption key fdsgfds gfds ",
     "expireAfterSeconds": 86400,

@@ -46,7 +46,6 @@ export const ConfigurationSchema = z
               httpOnly: z.boolean().optional().default(true),
               secure: z.boolean().optional(),
               maxAge: z.number().optional(),
-              sessionCookieName: z.string().optional().default("session"),
             })
             .optional()
             .default({}),

@@ -10,6 +10,9 @@ describe("Configuration Parser", () => {
       baseURL: "https://app.example.com",
       clientID: "test-client-id",
       clientSecret: "test",
+      session: {
+        encryptionKey: "test encryption key fdsgfds gfds ",
+      },
     };
 
     const parsedConfig = parseConfiguration(validConfig);
@@ -41,6 +44,9 @@ describe("Configuration Parser", () => {
       baseURL: "https://app.example.com",
       clientID: "test-client-id",
       clientSecret: "test-client-secret",
+      session: {
+        encryptionKey: "test encryption key fdsgfds gfds ",
+      },
     };
 
     const parsedConfig = parseConfiguration(minimalConfig);
@@ -62,6 +68,9 @@ describe("Configuration Parser", () => {
       baseURL: "https://app.example.com",
       clientID: "test-client-id",
       clientSecret: "test",
+      session: {
+        encryptionKey: "test encryption key fdsgfds gfds ",
+      },
     };
 
     const firstParsed = parseConfiguration(config);
@@ -78,10 +87,11 @@ describe("Configuration Parser", () => {
       routes: {
         login: "login",
       },
+      session: {
+        encryptionKey: "test encryption key fdsgfds gfds ",
+      },
     };
 
-    expect(() => parseConfiguration(config)).toThrow(
-      '"routes.login" with value "login" fails to match the required pattern: /^\\//',
-    );
+    expect(() => parseConfiguration(config)).toThrow();
   });
 });

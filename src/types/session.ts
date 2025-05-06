@@ -41,14 +41,16 @@ export interface OIDCTransaction {
  * Extend the Hono session context to include
  * OIDC session information.
  */
-export type OIDCSession = Session<{
-  /**
-   * The information about the OIDC session.
-   */
-  oidc?: OIDCAuthenticatedSession;
+export type OIDCSession<T = object> = Session<
+  {
+    /**
+     * The information about the OIDC session.
+     */
+    oidc?: OIDCAuthenticatedSession;
 
-  /**
-   * The information about the OIDC transaction.
-   */
-  oidc_tx?: OIDCTransaction;
-}>;
+    /**
+     * The information about the OIDC transaction.
+     */
+    oidc_tx?: OIDCTransaction;
+  } & T
+>;

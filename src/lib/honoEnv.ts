@@ -4,7 +4,7 @@ import { OIDCSession } from "../types/session";
 import { OIDCContext } from "./context";
 
 // Extend the Hono context to include OIDC context
-export interface OIDCVariables {
+export interface OIDCVariables<TSession = object> {
   /**
    * The information about the OIDC session.
    */
@@ -23,9 +23,10 @@ export interface OIDCVariables {
   /**
    * The session for the OIDC middleware.
    */
-  session?: OIDCSession;
+  session?: OIDCSession<TSession>;
 }
 
-export interface OIDCEnv {
-  Variables: OIDCVariables;
+export interface OIDCEnv<TBindings = object, TSession = object> {
+  Env: TBindings;
+  Variables: OIDCVariables<TSession>;
 }

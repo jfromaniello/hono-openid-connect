@@ -3,6 +3,7 @@ import { HTTPException } from "hono/http-exception";
 import { OIDCEnv } from "../lib/honoEnv";
 import { Configuration, InitConfiguration } from "./Configuration";
 import { ConfigurationSchema } from "./Schema";
+// import { ConfigurationSchema } from "./Schema";
 const parsedConfig = new Map<InitConfiguration, Configuration>();
 
 export const parseConfiguration = (
@@ -11,12 +12,9 @@ export const parseConfiguration = (
   if (parsedConfig.has(config)) {
     return parsedConfig.get(config)!;
   }
-  const result = ConfigurationSchema.validate(config);
-  if (result.error) {
-    throw result.error;
-  }
-  parsedConfig.set(config, result.value);
-  return result.value;
+  const result = ConfigurationSchema.parse(config) as Configuration;
+  parsedConfig.set(config, result);
+  return result;
 };
 
 export const getConfiguration = (c: Context<OIDCEnv>): Configuration => {
@@ -29,4 +27,4 @@ export const getConfiguration = (c: Context<OIDCEnv>): Configuration => {
   return c.var.oidcConfiguration;
 };
 
-export { assignFromEnv, ConditionalInitConfig } from "./envConfig";
+export { assignFromEnv, type ConditionalInitConfig } from "./envConfig";

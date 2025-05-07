@@ -1,8 +1,8 @@
+import { getConfiguration } from "@/config/index.js";
+import { OIDCEnv } from "@/lib/honoEnv.js";
 import { createMiddleware } from "hono/factory";
 import * as oidc from "openid-client";
-import { getConfiguration } from "../config";
-import { OIDCEnv } from "../lib/honoEnv";
-import { resumeSilentLogin } from "./silentLogin";
+import { resumeSilentLogin } from "./silentLogin.js";
 
 type LogoutParams = {
   redirectAfterLogout?: string;

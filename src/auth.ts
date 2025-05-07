@@ -1,21 +1,21 @@
+import {
+  assignFromEnv,
+  ConditionalInitConfig,
+  parseConfiguration,
+} from "@/config/index.js";
+import { initializeOidcClient } from "@/lib/client.js";
+import { OIDCContext } from "@/lib/context.js";
+import { OIDCEnv } from "@/lib/honoEnv.js";
+import {
+  callback as callbackHandler,
+  login as loginHandler,
+  logout as logoutHandler,
+} from "@/middleware/index.js";
 import { sessionMiddleware } from "@jfromaniello/hono-sessions";
 import { MiddlewareHandler, Next } from "hono";
 import { every } from "hono/combine";
 import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
-import {
-  assignFromEnv,
-  ConditionalInitConfig,
-  parseConfiguration,
-} from "./config";
-import { initializeOidcClient } from "./lib/client";
-import { OIDCContext } from "./lib/context";
-import { OIDCEnv } from "./lib/honoEnv";
-import {
-  callback as callbackHandler,
-  login as loginHandler,
-  logout as logoutHandler,
-} from "./middleware";
 
 /**
  * Main auth middleware function.

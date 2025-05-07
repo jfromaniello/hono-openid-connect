@@ -1,9 +1,9 @@
+import { OIDCEnv } from "@/lib/honoEnv.js";
 import { Context } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { OIDCEnv } from "../lib/honoEnv";
-import { Configuration, InitConfiguration } from "./Configuration";
-import { ConfigurationSchema } from "./Schema";
-// import { ConfigurationSchema } from "./Schema";
+import { Configuration, InitConfiguration } from "./Configuration.js";
+import { ConfigurationSchema } from "./Schema.js";
+
 const parsedConfig = new Map<InitConfiguration, Configuration>();
 
 export const parseConfiguration = (
@@ -27,4 +27,7 @@ export const getConfiguration = (c: Context<OIDCEnv>): Configuration => {
   return c.var.oidcConfiguration;
 };
 
-export { assignFromEnv, type ConditionalInitConfig } from "./envConfig";
+export {
+  assignFromEnv,
+  type ConditionalInitConfig,
+} from "@/config/envConfig.js";

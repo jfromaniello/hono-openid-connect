@@ -1,5 +1,5 @@
-import { MakeOptional } from "../types/util";
-import { InitConfiguration } from "./Configuration";
+import { InitConfiguration } from "@/config/Configuration.js";
+import { MakeOptional } from "@/types/util.js";
 
 export type MinimalConfigByEnv = {
   OIDC_ISSUER_URL: string;

@@ -1,9 +1,9 @@
+import { OIDCAuthenticatedSession } from "@/types/session.js";
 import { Context } from "hono";
 import { decodeJwt } from "jose";
 import type { IDToken } from "oauth4webapi";
 import * as oidc from "openid-client";
-import { OIDCAuthenticatedSession } from "../types/session";
-import { OIDCEnv } from "./honoEnv";
+import { OIDCEnv } from "./honoEnv.js";
 
 export class OIDCContext {
   private c: Context;

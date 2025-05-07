@@ -153,7 +153,7 @@ describe("callback middleware", () => {
     });
 
     it("should redirect to the returnTo URL by default", () => {
-      expect(mockContext.redirect).toHaveBeenCalledWith("/dashboard");
+      expect(mockContext.redirect).toHaveBeenCalledWith("/dashboard", 307);
     });
   });
 
@@ -167,7 +167,7 @@ describe("callback middleware", () => {
     });
 
     it("should redirect to the specified redirectAfterLogin URL", () => {
-      expect(mockContext.redirect).toHaveBeenCalledWith("/custom-page");
+      expect(mockContext.redirect).toHaveBeenCalledWith("/custom-page", 307);
     });
 
     it("should return the redirect response", () => {
@@ -207,7 +207,7 @@ describe("callback middleware", () => {
     });
 
     it("should redirect to root (/) as fallback", () => {
-      expect(mockContext.redirect).toHaveBeenCalledWith("/");
+      expect(mockContext.redirect).toHaveBeenCalledWith("/", 307);
     });
   });
 

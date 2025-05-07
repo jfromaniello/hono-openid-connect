@@ -1,4 +1,5 @@
 import { Context } from "hono";
+import { decodeJwt } from "jose";
 import type { IDToken } from "oauth4webapi";
 import * as oidc from "openid-client";
 import { OIDCAuthenticatedSession } from "../types/session";
@@ -18,10 +19,14 @@ export class OIDCContext {
   }
 
   get claims(): IDToken | undefined {
-    if (!this.isAuthenticated || !this.oidcSession) {
+    if (
+      !this.isAuthenticated ||
+      !this.oidcSession ||
+      !this.oidcSession.tokens.id_token
+    ) {
       return undefined;
     }
-    return this.oidcSession.claims;
+    return decodeJwt(this.oidcSession.tokens.id_token);
   }
 
   async fetchUserInfo(): Promise<oidc.UserInfoResponse | undefined> {
@@ -91,7 +96,6 @@ export class OIDCContext {
     const newOIDCSession: OIDCAuthenticatedSession = {
       tokens: newTokens,
       requestedAt,
-      claims: tokens.claims(),
     };
 
     //Store the new OIDC session in the context

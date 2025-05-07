@@ -62,7 +62,7 @@ export const callback = (params: CallbackParams = {}) => {
       const authSession: OIDCAuthenticatedSession = {
         tokens,
         requestedAt,
-        claims: tokens.claims(),
+        // claims: tokens.claims(),
       };
 
       session.set("oidc", authSession);
@@ -74,7 +74,7 @@ export const callback = (params: CallbackParams = {}) => {
         return next();
       }
 
-      return c.redirect(params.redirectAfterLogin ?? returnTo ?? "/");
+      return c.redirect(params.redirectAfterLogin ?? returnTo ?? "/", 307);
     } catch (err) {
       await resumeSilentLogin()(c, next);
 

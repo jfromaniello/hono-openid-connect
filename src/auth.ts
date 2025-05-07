@@ -84,8 +84,7 @@ export function auth(initConfig: ConditionalInitConfig): MiddlewareHandler {
         console.error("OIDC Middleware Error:", error);
         return c.text("Internal Server Error", 500);
       }
-
-      // Continue to the next middleware or route handler
+      // // Continue to the next middleware or route handler
       return await next();
     },
   );

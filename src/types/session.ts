@@ -17,12 +17,6 @@ export interface OIDCAuthenticatedSession {
    * @default Date.now() / 1000
    */
   requestedAt: number;
-
-  /**
-   * The validated claims returned by the OIDC provider.
-   * This is present only if the id_token is requested.
-   */
-  claims: oidc.IDToken | undefined;
 }
 
 /**

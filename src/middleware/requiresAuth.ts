@@ -4,6 +4,7 @@ import { accepts } from "hono/accepts";
 import { HTTPException } from "hono/http-exception";
 import { login } from "./login.js";
 
+type OnRequiredAuth = "error" | "login";
 /**
  * This middleware checks if the user is authetnicated.
  *
@@ -11,8 +12,11 @@ import { login } from "./login.js";
  * - If the request accepts HTML and errorOnRequiredAuth is false
  *   then it redirects to the login page
  * - Otherwise it throws a 401 error
+ *
+ * @param behavior - The behavior to use when authentication is required.
+ * Defaults to `configuration.errorOnRequiredAuth` if not provided.
  */
-export function requiresAuth() {
+export function requiresAuth(behavior?: OnRequiredAuth) {
   return async (c: Context, next: Next) => {
     // Check if user is authenticated
     if (!c.var.oidc?.isAuthenticated) {
@@ -24,7 +28,12 @@ export function requiresAuth() {
           default: "application/json",
         }) === "text/html";
 
-      if (configuration.errorOnRequiredAuth && !acceptsHTML) {
+      const shouldFail =
+        !acceptsHTML ||
+        behavior === "error" ||
+        (!behavior && configuration.errorOnRequiredAuth);
+
+      if (shouldFail) {
         throw new HTTPException(401, {
           message: "Authentication required",
         });

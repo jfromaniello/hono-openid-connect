@@ -1,8 +1,8 @@
+import { getConfiguration } from "@/config/index.js";
 import { Context, Next } from "hono";
 import { accepts } from "hono/accepts";
 import { HTTPException } from "hono/http-exception";
-import { getConfiguration } from "../config";
-import { login } from "./login";
+import { login } from "./login.js";
 
 /**
  * This middleware checks if the user is authetnicated.

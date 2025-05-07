@@ -1,5 +1,5 @@
+import { OIDCAuthorizationRequestParams } from "@/config/authRequest.js";
 import { SessionOptions } from "@jfromaniello/hono-sessions";
-import { OIDCAuthorizationRequestParams } from "./authRequest";
 
 type Routes = {
   login: string;

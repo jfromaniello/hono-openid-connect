@@ -1,7 +1,7 @@
+import { Configuration } from "@/config/Configuration.js";
+import { OIDCSession } from "@/types/session.js";
 import * as oidc from "openid-client";
-import { Configuration } from "../config/Configuration";
-import { OIDCSession } from "../types/session";
-import { OIDCContext } from "./context";
+import { OIDCContext } from "./context.js";
 
 // Extend the Hono context to include OIDC context
 export interface OIDCVariables<TSession = object> {

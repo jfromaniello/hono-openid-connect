@@ -1,6 +1,6 @@
+import { Configuration } from "@/config/Configuration.js";
 import * as oidc from "openid-client";
 import QuickLRU from "quick-lru";
-import { Configuration } from "../config/Configuration";
 
 // Cache for OIDC clients
 const clientCache = new QuickLRU<string, oidc.Configuration>({ maxSize: 10 });

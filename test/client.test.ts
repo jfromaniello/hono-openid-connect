@@ -60,6 +60,7 @@ describe("OIDC Client Initialization", () => {
         response_type: "code",
         scope: "openid profile email",
       },
+      debug: () => {},
       idpLogout: false,
       clockTolerance: 60,
       enableTelemetry: true,

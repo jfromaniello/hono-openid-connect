@@ -1,9 +1,9 @@
+import { OIDCAuthorizationRequestParams } from "@/config/authRequest.js";
+import { getConfiguration } from "@/config/index.js";
+import { OIDCEnv } from "@/lib/honoEnv.js";
+import { toSearchParams } from "@/utils/util.js";
 import { createMiddleware } from "hono/factory";
 import * as oidc from "openid-client";
-import { getConfiguration } from "../config";
-import { OIDCAuthorizationRequestParams } from "../config/authRequest";
-import { OIDCEnv } from "../lib/honoEnv";
-import { toSearchParams } from "../utils/util";
 
 export type LoginParams = {
   /**

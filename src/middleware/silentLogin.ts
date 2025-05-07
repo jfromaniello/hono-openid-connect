@@ -1,11 +1,11 @@
+import { getConfiguration } from "@/config/index.js";
+import { OIDCEnv } from "@/lib/honoEnv.js";
 import { Context } from "hono";
 import { accepts } from "hono/accepts";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
 import { CookieOptions } from "hono/utils/cookie";
-import { getConfiguration } from "../config";
-import { OIDCEnv } from "../lib/honoEnv";
-import { login } from "./login";
+import { login } from "./login.js";
 
 const COOKIE_NAME = "oidc_skip_silent_login";
 

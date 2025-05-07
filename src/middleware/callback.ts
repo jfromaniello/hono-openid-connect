@@ -1,12 +1,12 @@
+import { getConfiguration } from "@/config/index.js";
 import { Next } from "hono";
 import { createMiddleware } from "hono/factory";
 import * as oidc from "openid-client";
-import { getConfiguration } from "../config";
-import { OIDCContext } from "../lib/context";
-import { OIDCException } from "../lib/Exception";
-import { OIDCEnv } from "../lib/honoEnv";
-import { OIDCAuthenticatedSession } from "../types/session";
-import { resumeSilentLogin } from "./silentLogin";
+import { OIDCContext } from "../lib/context.js";
+import { OIDCException } from "../lib/Exception.js";
+import { OIDCEnv } from "../lib/honoEnv.js";
+import { OIDCAuthenticatedSession } from "../types/session.js";
+import { resumeSilentLogin } from "./silentLogin.js";
 
 type CallbackParams = {
   /**

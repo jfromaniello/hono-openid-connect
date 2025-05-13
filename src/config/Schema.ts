@@ -23,10 +23,10 @@ const createAuthParamsSchema = () => {
 // Create the configuration schema
 export const ConfigurationSchema = z
   .object({
-    session: z.union([
-      z.literal(false),
-      z
-        .object({
+    session: z
+      .union([
+        z.literal(false),
+        z.object({
           store: z.any().optional(),
           encryptionKey: z.string().min(32).optional(),
           expireAfterSeconds: z
@@ -48,9 +48,9 @@ export const ConfigurationSchema = z
             })
             .optional()
             .default({}),
-        })
-        .required(),
-    ]),
+        }),
+      ])
+      .default({}),
     tokenEndpointParams: z.record(z.any()).optional(),
     authorizationParams: createAuthParamsSchema().optional().default({}),
     logoutParams: z.record(z.any()).optional(),

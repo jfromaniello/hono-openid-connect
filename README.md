@@ -169,7 +169,6 @@ You can also configure the middleware using environment variables. The following
 - OIDC_CLIENT_ID: The client ID provided by your OIDC provider
 - OIDC_CLIENT_SECRET?: The client secret provided by your OIDC provider (required for most flows)
 - BASE_URL: The base URL of your application (e.g., `https://myapp.com`)
-- OIDC_SESSION_ENCRYPTION_KEY: The encryption key for session management (minimum 32 characters).
 
 In order to make the parameters of the middleware optional so you can use `auth({})`, your `process.env` must define the properties as follows:
 

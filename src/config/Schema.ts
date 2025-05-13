@@ -1,4 +1,3 @@
-import { CookieStore } from "@jfromaniello/hono-sessions";
 import { z } from "zod";
 
 const isHttps = /^https:/i;
@@ -28,8 +27,8 @@ export const ConfigurationSchema = z
       z.literal(false),
       z
         .object({
-          store: z.any().optional().default(new CookieStore()),
-          encryptionKey: z.string().min(32),
+          store: z.any().optional(),
+          encryptionKey: z.string().min(32).optional(),
           expireAfterSeconds: z
             .number()
             .optional()

@@ -53,11 +53,6 @@ exports[`Configuration Parser > should parse a valid configuration 1`] = `
     "encryptionKey": "test encryption key fdsgfds gfds ",
     "expireAfterSeconds": 86400,
     "sessionCookieName": "appSession",
-    "store": CookieStore {
-      "cookieOptions": undefined,
-      "encryptionKey": undefined,
-      "sessionCookieName": "session",
-    },
   },
 }
 `;

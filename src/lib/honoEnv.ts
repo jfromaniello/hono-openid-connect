@@ -26,7 +26,8 @@ export interface OIDCVariables<TSession = object> {
   session?: OIDCSession<TSession>;
 }
 
-export interface OIDCEnv<TBindings = object, TSession = object> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface OIDCEnv<TBindings = any, TSession = any> {
   Bindings: TBindings;
   Variables: OIDCVariables<TSession>;
 }

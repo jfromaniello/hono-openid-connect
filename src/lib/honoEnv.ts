@@ -27,6 +27,6 @@ export interface OIDCVariables<TSession = object> {
 }
 
 export interface OIDCEnv<TBindings = object, TSession = object> {
-  Env: TBindings;
+  Bindings: TBindings;
   Variables: OIDCVariables<TSession>;
 }

@@ -355,10 +355,8 @@ describe("login middleware", () => {
   });
 
   describe("when both silent and authorizationParams.prompt are specified", () => {
-    let result: Response;
-
     beforeEach(async () => {
-      result = (await login({
+      (await login({
         silent: true,
         authorizationParams: {
           prompt: "consent",

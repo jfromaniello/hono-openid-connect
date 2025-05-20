@@ -28,6 +28,14 @@ export type LoginParams = {
    * @default false
    */
   silent?: boolean;
+
+  /**
+   * Override authorization parameters.
+   *
+   * @example { prompt: 'none' }
+   * @default undefined
+   */
+  authorizationParams?: Partial<OIDCAuthorizationRequestParams>;
 };
 
 /**
@@ -69,6 +77,7 @@ export const login = (params: LoginParams = {}) => {
       code_challenge_method: codeChallenge ? "S256" : undefined,
       nonce,
       state,
+      ...(params.authorizationParams ?? {}),
     };
 
     if (params.silent) {

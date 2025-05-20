@@ -307,4 +307,95 @@ describe("login middleware", () => {
       });
     });
   });
+
+  describe("when authorizationParams is provided", () => {
+    let result: Response;
+
+    beforeEach(async () => {
+      result = (await login({
+        authorizationParams: {
+          prompt: "consent",
+          acr_values: "level1",
+          login_hint: "user@example.com",
+        },
+      })(mockContext, nextFn)) as Response;
+    });
+
+    it("should merge authorizationParams with configuration authorizationParams", () => {
+      expect(toSearchParams).toHaveBeenCalledWith(
+        expect.objectContaining({
+          prompt: "consent",
+          acr_values: "level1",
+          login_hint: "user@example.com",
+        }),
+      );
+    });
+
+    it("should maintain original authorizationParams properties", () => {
+      expect(toSearchParams).toHaveBeenCalledWith(
+        expect.objectContaining({
+          response_type: mockConfiguration.authorizationParams.response_type,
+          scope: mockConfiguration.authorizationParams.scope,
+        }),
+      );
+    });
+
+    it("should redirect to the authorization URL", () => {
+      expect(mockContext.redirect).toHaveBeenCalledWith(
+        "https://idp.example.com/auth",
+      );
+    });
+
+    it("should return a 302 response", () => {
+      expect(result).toEqual({
+        status: 302,
+        headers: { location: "https://idp.example.com/auth" },
+      });
+    });
+  });
+
+  describe("when both silent and authorizationParams.prompt are specified", () => {
+    let result: Response;
+
+    beforeEach(async () => {
+      result = (await login({
+        silent: true,
+        authorizationParams: {
+          prompt: "consent",
+        },
+      })(mockContext, nextFn)) as Response;
+    });
+
+    it("should override prompt with none due to silent parameter", () => {
+      expect(toSearchParams).toHaveBeenCalledWith(
+        expect.objectContaining({
+          prompt: "none",
+        }),
+      );
+    });
+
+    it("should maintain other authorizationParams properties", () => {
+      expect(toSearchParams).toHaveBeenCalledWith(
+        expect.objectContaining({
+          response_type: mockConfiguration.authorizationParams.response_type,
+          scope: mockConfiguration.authorizationParams.scope,
+        }),
+      );
+    });
+
+    it("should set silent flag in the session", () => {
+      expect(mockSession.flash).toHaveBeenCalledWith(
+        "oidc_tx",
+        expect.objectContaining({
+          silent: true,
+        }),
+      );
+    });
+
+    it("should redirect to the authorization URL", () => {
+      expect(mockContext.redirect).toHaveBeenCalledWith(
+        "https://idp.example.com/auth",
+      );
+    });
+  });
 });

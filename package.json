@@ -1,6 +1,6 @@
 {
   "name": "hono-openid-connect",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "OpenID Connect middleware for Hono",
   "type": "module",
   "main": "dist/index.js",

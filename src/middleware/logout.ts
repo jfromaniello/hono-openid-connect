@@ -1,5 +1,6 @@
 import { getConfiguration } from "@/config/index.js";
 import { OIDCEnv } from "@/lib/honoEnv.js";
+import { validateRedirectUrl } from "@/utils/util.js";
 import { createMiddleware } from "hono/factory";
 import * as oidc from "openid-client";
 import { resumeSilentLogin } from "./silentLogin.js";
@@ -25,12 +26,16 @@ export const logout = (params: LogoutParams = {}) => {
 
     await resumeSilentLogin()(c, next);
 
-    const postLogoutRedirectUri = params.redirectAfterLogout ?? "/";
+    // Validate the redirect URL to prevent open redirects
+    const safePostLogoutRedirectUri = validateRedirectUrl(
+      params.redirectAfterLogout ?? "/",
+      config.baseURL,
+    );
 
     // Handle IdP logout if enabled
     if (config.idpLogout && oidcSession?.tokens.id_token) {
       const postLogoutRedirectURI = new URL(
-        postLogoutRedirectUri,
+        safePostLogoutRedirectUri,
         config.baseURL,
       ).toString();
       const endSessionUrl = oidc.buildEndSessionUrl(oidcClient, {
@@ -41,6 +46,6 @@ export const logout = (params: LogoutParams = {}) => {
     }
 
     // If not doing IdP logout, just redirect to the specified URL
-    return c.redirect(postLogoutRedirectUri);
+    return c.redirect(safePostLogoutRedirectUri);
   });
 };

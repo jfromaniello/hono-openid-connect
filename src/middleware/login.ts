@@ -1,7 +1,7 @@
 import { OIDCAuthorizationRequestParams } from "@/config/authRequest.js";
 import { getConfiguration } from "@/config/index.js";
 import { OIDCEnv } from "@/lib/honoEnv.js";
-import { toSearchParams } from "@/utils/util.js";
+import { toSearchParams, validateRedirectUrl } from "@/utils/util.js";
 import { createMiddleware } from "hono/factory";
 import * as oidc from "openid-client";
 
@@ -60,12 +60,21 @@ export const login = (params: LoginParams = {}) => {
     const { debug } = configuration;
     const oidcClientConfig = c.var.oidcClient!;
     const session = c.get("session")!;
-    const returnTo =
+
+    // Get the potential return URL
+    const potentialReturnTo =
       params.redirectAfterLogin ??
       (c.req.method === "GET" && c.req.path !== configuration.routes.login
         ? c.req.url
         : undefined) ??
+      c.req.query("return_to") ??
       "/";
+
+    // Validate the URL to prevent open redirects
+    const returnTo = validateRedirectUrl(
+      potentialReturnTo,
+      configuration.baseURL,
+    );
 
     // Use URL class for safer URL construction
     const redirectURI = new URL(

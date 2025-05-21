@@ -24,11 +24,15 @@ vi.mock("../../src/utils/debug", () => ({
   default: vi.fn().mockReturnValue(vi.fn()),
 }));
 
-vi.mock("../../src/utils/util", () => ({
-  toSearchParams: vi
-    .fn()
-    .mockImplementation((params) => new URLSearchParams(params)),
-}));
+vi.mock("../../src/utils/util", async (original) => {
+  const actual: object = await original();
+  return {
+    ...actual,
+    toSearchParams: vi
+      .fn()
+      .mockImplementation((params) => new URLSearchParams(params)),
+  };
+});
 
 describe("login middleware", () => {
   let mockContext: Context;
@@ -71,6 +75,7 @@ describe("login middleware", () => {
       req: {
         url: "https://app.example.com/login",
         method: "GET",
+        query: vi.fn().mockReturnValue(null),
       },
       redirect: vi.fn().mockImplementation((url) => {
         return { status: 302, headers: { location: url } };
@@ -233,6 +238,24 @@ describe("login middleware", () => {
       expect(result).toEqual({
         status: 302,
         headers: { location: "https://idp.example.com/auth" },
+      });
+    });
+  });
+
+  describe("when redirectAfterLogin is malicious", () => {
+    beforeEach(async () => {
+      (await login({
+        redirectAfterLogin: "https://malicious.example.com",
+      })(mockContext, nextFn)) as Response;
+    });
+
+    it("should use the '/' path", () => {
+      expect(mockSession.flash).toHaveBeenCalledWith("oidc_tx", {
+        codeVerifier: "mock-code-verifier",
+        nonce: "mock-nonce",
+        state: "mock-state",
+        returnTo: "/",
+        silent: false,
       });
     });
   });

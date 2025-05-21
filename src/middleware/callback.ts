@@ -1,4 +1,5 @@
 import { getConfiguration } from "@/config/index.js";
+import { validateRedirectUrl } from "@/utils/util.js";
 import { Next } from "hono";
 import { createMiddleware } from "hono/factory";
 import * as oidc from "openid-client";
@@ -74,7 +75,13 @@ export const callback = (params: CallbackParams = {}) => {
         return next();
       }
 
-      return c.redirect(params.redirectAfterLogin ?? returnTo ?? "/", 307);
+      // Validate the redirect URL to prevent open redirects
+      const safeRedirectUrl = validateRedirectUrl(
+        params.redirectAfterLogin ?? returnTo ?? "/",
+        configuration.baseURL,
+      );
+
+      return c.redirect(safeRedirectUrl, 307);
     } catch (err) {
       await resumeSilentLogin()(c, next);
 

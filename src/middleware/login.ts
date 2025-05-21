@@ -36,6 +36,19 @@ export type LoginParams = {
    * @default undefined
    */
   authorizationParams?: Partial<OIDCAuthorizationRequestParams>;
+
+  /**
+   * Forwards specific query parameters from the login request to the authorization request.
+   * This allows passing through parameters like 'ui_locales', 'acr_values', or custom parameters
+   * that your identity provider supports without having to specify them in authorizationParams.
+   *
+   * Only parameters with non-empty values will be forwarded.
+   *
+   * @example ['ui_locales', 'acr_values', 'login_hint']
+   * @example ['locale', 'campaign']
+   * @default []
+   */
+  forwardAuthorizationParams?: string[];
 };
 
 /**
@@ -70,6 +83,21 @@ export const login = (params: LoginParams = {}) => {
       codeChallenge = await oidc.calculatePKCECodeChallenge(codeVerifier);
     }
 
+    const paramsFromQuery: Record<string, string> = {};
+
+    const forwardParams =
+      params.forwardAuthorizationParams ??
+      configuration.forwardAuthorizationParams;
+
+    if (forwardParams && forwardParams.length > 0) {
+      for (const param of forwardParams) {
+        const value = c.req.query(param);
+        if (value) {
+          paramsFromQuery[param] = value;
+        }
+      }
+    }
+
     const authParams: Partial<OIDCAuthorizationRequestParams> = {
       ...configuration.authorizationParams,
       redirect_uri: redirectURI,
@@ -78,6 +106,7 @@ export const login = (params: LoginParams = {}) => {
       nonce,
       state,
       ...(params.authorizationParams ?? {}),
+      ...paramsFromQuery,
     };
 
     if (params.silent) {

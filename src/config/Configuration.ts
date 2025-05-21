@@ -86,6 +86,13 @@ export interface Configuration {
   authorizationParams: Partial<OIDCAuthorizationRequestParams>;
 
   /**
+   * Forwards specific query parameters from the login request to the authorization request.
+   * This allows passing through parameters like 'ui_locales', 'acr_values', or custom parameters
+   * that your identity provider supports without having to specify them in authorizationParams.
+   */
+  forwardAuthorizationParams?: string[];
+
+  /**
    * Additional parameters that will be sent to the
    * token endpoint, typically used for parameters such as `resource`
    * in cases where multiple resource indicators were requested but

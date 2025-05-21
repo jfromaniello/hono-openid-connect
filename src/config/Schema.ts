@@ -53,6 +53,7 @@ export const ConfigurationSchema = z
       .default({}),
     tokenEndpointParams: z.record(z.any()).optional(),
     authorizationParams: createAuthParamsSchema().optional().default({}),
+    forwardAuthorizationParams: z.array(z.string()).optional().default([]),
     logoutParams: z.record(z.any()).optional(),
     baseURL: z.string().url(),
     clientID: z.string(),

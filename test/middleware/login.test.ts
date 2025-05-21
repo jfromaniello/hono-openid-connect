@@ -396,4 +396,65 @@ describe("login middleware", () => {
       );
     });
   });
+
+  describe("when forwardQueryParams is provided", () => {
+    let result: Response;
+
+    beforeEach(async () => {
+      // Mock the query parameters in the request
+      mockContext.req.query = vi.fn().mockImplementation((param) => {
+        const params: Record<string, string> = {
+          locale: "en-US",
+          campaign: "spring2025",
+          empty: "",
+        };
+        return params[param] || null;
+      });
+
+      result = (await login({
+        forwardAuthorizationParams: ["locale", "campaign", "nonexistent"],
+      })(mockContext, nextFn)) as Response;
+    });
+
+    it("should forward specified query parameters to the authorization request", () => {
+      expect(toSearchParams).toHaveBeenCalledWith(
+        expect.objectContaining({
+          locale: "en-US",
+          campaign: "spring2025",
+        }),
+      );
+    });
+
+    it("should not forward non-existent query parameters", () => {
+      const searchParamsArg = (toSearchParams as Mock).mock.calls[0][0];
+      expect(searchParamsArg).not.toHaveProperty("nonexistent");
+    });
+
+    it("should not forward empty query parameters", () => {
+      const searchParamsArg = (toSearchParams as Mock).mock.calls[0][0];
+      expect(searchParamsArg).not.toHaveProperty("empty");
+    });
+
+    it("should maintain original authorization parameters", () => {
+      expect(toSearchParams).toHaveBeenCalledWith(
+        expect.objectContaining({
+          response_type: mockConfiguration.authorizationParams.response_type,
+          scope: mockConfiguration.authorizationParams.scope,
+        }),
+      );
+    });
+
+    it("should redirect to the authorization URL", () => {
+      expect(mockContext.redirect).toHaveBeenCalledWith(
+        "https://idp.example.com/auth",
+      );
+    });
+
+    it("should return a 302 response", () => {
+      expect(result).toEqual({
+        status: 302,
+        headers: { location: "https://idp.example.com/auth" },
+      });
+    });
+  });
 });

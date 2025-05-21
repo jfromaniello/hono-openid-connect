@@ -253,6 +253,42 @@ app.get("/", attemptSilentLogin(), async (c) => {
 });
 ```
 
+### Advanced Login Options
+
+The login middleware supports several advanced options:
+
+```ts
+import { login } from "hono-openid-connect";
+
+// Custom login options
+app.get("/custom-login", async (c) => {
+  return login({
+    // Redirect user to this URL after successful authentication
+    redirectAfterLogin: "/dashboard",
+
+    // Additional authorization parameters to send to the identity provider
+    authorizationParams: {
+      prompt: "consent",
+      acr_values: "level2",
+      login_hint: "user@example.com",
+    },
+
+    // Forward specific query parameters from the login request to the authorization request
+    forwardQueryParams: ["ui_locales", "login_hint", "campaign"],
+
+    // Attempt silent authentication (no user interaction)
+    silent: false,
+  })(c);
+});
+```
+
+With `forwardQueryParams`, you can pass query parameters from the login request to the authorization request. This is useful for:
+
+- Passing UI locale preferences (`ui_locales`)
+- Forwarding login hints to the identity provider
+- Maintaining tracking parameters throughout the authentication flow
+- Supporting custom parameters your identity provider accepts
+
 ## Current Limitations
 
 - **Backchannel Logout**: Unlike express-openid-connect, this middleware does not currently support backchannel logout.
